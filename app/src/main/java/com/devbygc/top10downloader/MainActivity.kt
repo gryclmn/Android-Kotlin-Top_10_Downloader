@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreated called")
 
         val downloadData = DownloadData()
-        downloadData.execute("URL goes here")
+        downloadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
         Log.d(TAG, "onCreate done")
     }
 
@@ -44,35 +44,54 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "onPostExecute: parameter is $result")
             }
 
+        private fun downloadXML(urlPath: String?): String {
+            val xmlResult = StringBuilder()
+
+            try {
+                val url = URL(urlPath)
+                val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+                val response = connection.responseCode
+                /*
+                  RESPONSE CODES:
+                  1xx = Informational
+                  2xx = Success
+                  3xx = Redirection
+                  4xx = Client Error
+                  5xx = Server Error
+                */
+                Log.d(TAG, "downloadXML: The response code was $response")
+
+    //            val inputStream = connection.inputStream
+    //            val inputStreamReader = InputStreamReader(inputStream)
+    //            val reader = BufferedReader(inputStreamReader)
+                val reader = BufferedReader(InputStreamReader(connection.inputStream))
+
+                val inputBuffer = CharArray(500)
+                var charsRead = 0
+                while (charsRead >= 0) {
+                    charsRead = reader.read(inputBuffer)
+                    if (charsRead > 0) {
+                        xmlResult.append(String(inputBuffer, 0, charsRead))
+                    }
+                }
+                reader.close()
+
+                Log.d(TAG, "Received ${xmlResult.length} bytes")
+                return xmlResult.toString()
+
+            } catch (e: MalformedURLException) {
+                Log.e(TAG, "downloadXML: Invalid URL ${e.message}")
+            } catch (e: IOException) {
+                Log.e(TAG, "downloadXML: IO Exception reading data: ${e.message}")
+            } catch (e: Exception) {
+                Log.e(TAG, "Unknown error: ${e.message}")
+            }
+
+            return "" // If code gets to here there is a problem
+        }
+
         }
     }
 
-    private fun downloadXML(urlPath: String?): String {
-        val xmlResult = StringBuilder()
 
-        try {
-            val url = URL(urlPath)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            val response = connection.responseCode
-            /*
-              RESPONSE CODES:
-              1xx = Informational
-              2xx = Success
-              3xx = Redirection
-              4xx = Client Error
-              5xx = Server Error
-            */
-            Log.d(TAG, "downloadXML: The response code was $response")
-
-            val inputStream = connection.inputStream
-            val inputStreamReader = InputStreamReader(inputStream)
-            val reader = BufferedReader(inputStreamReader)
-        } catch (e: MalformedURLException) {
-            Log.e(TAG, "downloadXML: Invalid URL ${e.message}")
-        } catch (e: IOException) {
-            Log.e(TAG, "downloadXML: IO Exception reading data: ${e.message}")
-        } catch (e: Exception) {
-            Log.e(TAG, "Unknown error: ${e.message}")
-        }
-    }
 }
