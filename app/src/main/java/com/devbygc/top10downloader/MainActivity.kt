@@ -1,8 +1,8 @@
 package com.devbygc.top10downloader
 
 import android.os.AsyncTask
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import java.io.BufferedReader
 import java.io.IOException
@@ -83,6 +83,8 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "downloadXML: Invalid URL ${e.message}")
             } catch (e: IOException) {
                 Log.e(TAG, "downloadXML: IO Exception reading data: ${e.message}")
+            } catch (e: SecurityException) {
+                Log.e(TAG, "downloadXML: Security exception. Needs permissions? ${e.message}")
             } catch (e: Exception) {
                 Log.e(TAG, "Unknown error: ${e.message}")
             }
