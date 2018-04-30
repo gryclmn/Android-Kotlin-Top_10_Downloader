@@ -4,12 +4,25 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
 import java.net.URL
+
+class FeedEntry {
+    var name: String = ""
+    var artist: String = ""
+    var releaseDate: String = ""
+    var summary: String = ""
+    var imageURL: String = ""
+
+    override fun toString(): String {
+        return """
+            name = $name
+            artist = $artist
+            releaseDate = $releaseDate
+            summary = $summary
+            imageURL = $imageURL
+        """.trimIndent()
+    }
+}
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -45,51 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         private fun downloadXML(urlPath: String?): String {
-            val xmlResult = StringBuilder()
-
-            try {
-                val url = URL(urlPath)
-                val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-                val response = connection.responseCode
-                /*
-                  RESPONSE CODES:
-                  1xx = Informational
-                  2xx = Success
-                  3xx = Redirection
-                  4xx = Client Error
-                  5xx = Server Error
-                */
-                Log.d(TAG, "downloadXML: The response code was $response")
-
-    //            val inputStream = connection.inputStream
-    //            val inputStreamReader = InputStreamReader(inputStream)
-    //            val reader = BufferedReader(inputStreamReader)
-                val reader = BufferedReader(InputStreamReader(connection.inputStream))
-
-                val inputBuffer = CharArray(500)
-                var charsRead = 0
-                while (charsRead >= 0) {
-                    charsRead = reader.read(inputBuffer)
-                    if (charsRead > 0) {
-                        xmlResult.append(String(inputBuffer, 0, charsRead))
-                    }
-                }
-                reader.close()
-
-                Log.d(TAG, "Received ${xmlResult.length} bytes")
-                return xmlResult.toString()
-
-            } catch (e: MalformedURLException) {
-                Log.e(TAG, "downloadXML: Invalid URL ${e.message}")
-            } catch (e: IOException) {
-                Log.e(TAG, "downloadXML: IO Exception reading data: ${e.message}")
-            } catch (e: SecurityException) {
-                Log.e(TAG, "downloadXML: Security exception. Needs permissions? ${e.message}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Unknown error: ${e.message}")
-            }
-
-            return "" // If code gets to here there is a problem
+            return URL(urlPath).readText()
         }
 
         }
