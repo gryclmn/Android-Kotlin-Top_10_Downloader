@@ -28,7 +28,7 @@ class ParseApplications {
 
             while (eventType != XmlPullParser.END_DOCUMENT) {
 
-                val tagName = xpp.name.toLowerCase()   // TODO: should use safe-call operator
+                val tagName = xpp.name?.toLowerCase()
 
                 when (eventType) {
 
@@ -57,7 +57,7 @@ class ParseApplications {
 
                                 "name" -> currentRecord.name = textValue
                                 "artist" -> currentRecord.artist = textValue
-                                "releaseDate" -> currentRecord.releaseDate = textValue
+                                "releasedate" -> currentRecord.releaseDate = textValue
                                 "summary" -> currentRecord.summary = textValue
                                 "image" -> currentRecord.imageURL = textValue
 
@@ -68,6 +68,14 @@ class ParseApplications {
                     }
 
                 }
+
+                // Nothing else to do.
+                eventType = xpp.next()
+            }
+
+            for (app in applications) {
+                Log.d(TAG, "********************")
+                Log.d(TAG, app.toString())
             }
 
         } catch (e: Exception) {
