@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private var feedURL: String = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml"
     private var feedLimit = 10
+    var previousMenuItemId = R.id.menuFree
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +65,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        var previousMenuItemId = R.id.menuFree
 
         if (item.itemId == previousMenuItemId) {
             // Do nothing
